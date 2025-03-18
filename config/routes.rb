@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       end
       get '/weather', to: 'weather#show'
       get '/dashboard', to: 'dashboard#show' # New endpoint
+      post '/code_feedback', to: 'code_feedback#create'
     end
   end
 

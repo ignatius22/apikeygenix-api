@@ -4,16 +4,17 @@ module Api
         before_action :authenticate_with_jwt
   
         def show
-          render json: {
-            data: {
-              type: 'dashboard',
-              attributes: {
-                total_keys: current_user.api_keys.count,
-                active_keys: current_user.api_keys.where(status: 'active').count,
-                total_usage: current_user.api_keys.sum(:usage_count)
+            active_keys = current_user.api_keys.where(status: 'active').where('expires_at > ? OR expires_at IS NULL', Time.current)
+            render json: {
+              data: {
+                type: 'dashboard',
+                attributes: {
+                  total_keys: current_user.api_keys.count,
+                  active_keys: active_keys.count,
+                  total_usage: active_keys.sum(:usage_count)
+                }
               }
-            }
-          }, status: :ok
+            }, status: :ok
         end
   
         private
