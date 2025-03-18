@@ -1,7 +1,9 @@
 class ApiKey < ApplicationRecord
   belongs_to :user
   validates :key, presence: true, uniqueness: true
+
   before_validation :generate_key, on: :create
+  before_create :set_expiration
 
   def expired?
     expires_at.present? && expires_at < Time.current
@@ -13,6 +15,9 @@ class ApiKey < ApplicationRecord
     self.key ||= SecureRandom.hex(16)
     self.status ||= 'active'
     self.usage_count ||= 0
-    self.expires_at ||= 30.days.from_now # Moved expiration here
+  end
+
+  def set_expiration
+    self.expires_at ||= 30.days.from_now # Default to 30 days
   end
 end
