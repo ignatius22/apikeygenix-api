@@ -2,17 +2,15 @@ module Api
   module V1
     class ApiKeysController < ApplicationController
       before_action :authenticate_with_jwt
-      before_action :set_api_key, only: [:destroy, :use] # Add :use
+      before_action :set_api_key, only: [:destroy, :use]
 
       def index
-        # render json: current_user.api_keys, each_serializer: ApiKeySerializer, status: :ok
-        @api_key = ApiKey.all
-        render json: ApiKeySerializer.new(@api_key).serializable_hash.to_json, status: :ok
-
+        api_keys = current_user.api_keys.where(status: 'active').where('expires_at > ? OR expires_at IS NULL', Time.current)
+        render json: ApiKeySerializer.new(api_keys).serializable_hash.to_json, status: :ok
       end
 
       def create
-        api_key = current_user.api_keys.create(key: SecureRandom.hex(16), status: 'active')
+        api_key = current_user.api_keys.create # Rely on model defaults
         if api_key.persisted?
           render json: ApiKeySerializer.new(api_key).serializable_hash, status: :created
         else
@@ -28,6 +26,8 @@ module Api
       def use
         if @api_key.status == 'revoked'
           render json: { error: 'API key is revoked' }, status: :forbidden
+        elsif @api_key.expired?
+          render json: { error: 'API key has expired' }, status: :forbidden
         else
           @api_key.increment!(:usage_count)
           @api_key.update(last_used_at: Time.current)
@@ -49,7 +49,6 @@ module Api
         unless token
           render json: { error: 'No token provided' }, status: :unauthorized and return
         end
-
         begin
           @current_user = Warden::JWTAuth::UserDecoder.new.call(token, :user, nil)
           Rails.logger.info "Authenticated User: #{@current_user.inspect}"
