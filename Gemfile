@@ -53,3 +53,4 @@ gem "devise", "~> 4.9"
 gem 'devise-jwt'          # JWT for API auth (React/React Native friendly)
 gem 'stripe'              # Payment processing
 gem "jsonapi-serializer"
+gem 'rack-throttle'

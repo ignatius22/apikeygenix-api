@@ -16,6 +16,8 @@ Rails.application.routes.draw do
           patch 'use'
         end
       end
+      get '/weather', to: 'weather#show'
+      get '/dashboard', to: 'dashboard#show' # New endpoint
     end
   end
 
