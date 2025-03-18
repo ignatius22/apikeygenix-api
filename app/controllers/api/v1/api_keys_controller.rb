@@ -5,7 +5,10 @@ module Api
       before_action :set_api_key, only: [:destroy, :use] # Add :use
 
       def index
-        render json: current_user.api_keys, each_serializer: ApiKeySerializer, status: :ok
+        # render json: current_user.api_keys, each_serializer: ApiKeySerializer, status: :ok
+        @api_key = ApiKey.all
+        render json: ApiKeySerializer.new(@api_key).serializable_hash.to_json, status: :ok
+
       end
 
       def create
