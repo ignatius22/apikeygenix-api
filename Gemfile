@@ -55,3 +55,4 @@ gem 'stripe'              # Payment processing
 gem "jsonapi-serializer"
 gem 'rack-throttle'
 gem 'httparty'
+gem 'rkelly'

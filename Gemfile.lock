@@ -234,6 +234,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
+    rkelly (1.0.7)
     securerandom (0.4.1)
     stringio (3.1.5)
     stripe (13.5.0)
@@ -277,6 +278,7 @@ DEPENDENCIES
   rack-cors
   rack-throttle
   rails (~> 7.1.3, >= 7.1.3.4)
+  rkelly
   stripe
   tzinfo-data
 
